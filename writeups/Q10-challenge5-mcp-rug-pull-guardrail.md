@@ -22,6 +22,15 @@ The EXPLOIT must succeed first (see [Q9](Q9-challenge5-mcp-rug-pull-exploit.md))
 - **Manifest Pinning** — the approved manifest's hash is pinned at approval time; on every fetch the runtime recomputes the hash and compares it to the pinned value.
 - **Signature/Hash Verification** — the manifest signature must be valid for the pinned version. Any post-approval change (a rug pull) fails verification and is flagged for re-review instead of being invoked.
 
+## How I Approached This (Methodology)
+
+1. **Reuse the exact rug-pull parameter.** I resubmit the same `export_to=...` manifest change from Q9 to prove the control catches the identical tampering.
+2. **Match the control to the root cause.** Q9 worked because the manifest was fetched live and unpinned, so post-approval changes took effect silently. The right fix is to pin the approved manifest and verify its hash/signature on every fetch.
+3. **Re-test identically and read the console.** Enable guardrail → resubmit → confirm the tampered manifest fails the hash/signature check.
+4. **Confirm the negative result.** The console shows the computed hash no longer matches the signed-off version and the tool call is rejected and flagged for re-review. That yields the GUARDRAIL flag.
+
+**Methodology in one line:** replay the identical manifest tampering and confirm pinning + signature verification reject the changed artifact before the tool runs.
+
 ## How I Enabled & Re-tested It
 
 ```powershell

@@ -12,10 +12,11 @@ Complete walkthrough of the **cllmse-lab** LLM-security CTF, mapped to the OWASP
 
 1. [How to Spawn the Lab](#how-to-spawn-the-lab)
 2. [How the Challenges Work](#how-the-challenges-work)
-3. [Challenge & OWASP Map](#challenge--owasp-map)
-4. [Question Index (per-question writeups)](#question-index)
-5. [Flags Collected](#flags-collected)
-6. [Repo Layout](#repo-layout)
+3. [My Methodology (how I approached every challenge)](#my-methodology-how-i-approached-every-challenge)
+4. [Challenge & OWASP Map](#challenge--owasp-map)
+5. [Question Index (per-question writeups)](#question-index)
+6. [Flags Collected](#flags-collected)
+7. [Repo Layout](#repo-layout)
 
 ---
 
@@ -75,6 +76,26 @@ Each challenge page at `http://127.0.0.1:8090/challenge/<n>` (n = 1–5) gives a
 1. **Read the scenario, write a payload, Submit.** If it doesn't trigger, the console gives a hint — adjust and resubmit. On success you get an **EXPLOIT flag**.
 2. **Click "Enable Guardrail"** — turns on the specific control named on the page (unlocks only after a successful exploit).
 3. **Submit again** — the same payload (any phrasing) is now blocked, revealing a **GUARDRAIL flag**.
+
+---
+
+## My Methodology (how I approached every challenge)
+
+I used the same repeatable loop for all five challenges. Each per-question writeup in [`writeups/`](writeups/) has a dedicated **"How I Approached This (Methodology)"** section with the challenge-specific reasoning; the general loop is:
+
+**Exploit phase**
+1. **Read the scenario and locate the trust boundary / dangerous sink.** Identify where attacker-controlled input crosses into a trusted context (instruction channel, retrieval index, a URL fetch, a tool call, a tool manifest).
+2. **Map it to the OWASP LLM class.** Naming the weakness (LLM01/03/04/05/06) tells me the standard attack shape and the standard fix.
+3. **Define the concrete goal.** Not "misbehave" but a specific outcome — leak the system prompt, override a policy, read cloud credentials, move money, exfiltrate data.
+4. **Craft the minimal payload that achieves it** using the primitive that fits the class (instruction override, realistic poisoned doc, metadata URL, imperative money-move, malicious manifest field).
+5. **Submit, read the console, iterate on the hint** if it doesn't trigger. Capture the EXPLOIT flag + screenshot.
+
+**Guardrail phase**
+6. **Enable the named control** for that challenge.
+7. **Replay the *identical* payload** — the test is whether the defense neutralizes the same attack, so I deliberately do not reword it.
+8. **Confirm the inverted (blocked) outcome** in the console and capture the GUARDRAIL flag + screenshot.
+
+**Verification tooling:** I drove each challenge over HTTP with PowerShell `Invoke-WebRequest` (POST to `/challenge/<n>/exploit` and `/challenge/<n>/guardrail`), parsed the console/flag out of the returned HTML, and rendered the result page to a PNG with headless Chrome for proof.
 
 ---
 

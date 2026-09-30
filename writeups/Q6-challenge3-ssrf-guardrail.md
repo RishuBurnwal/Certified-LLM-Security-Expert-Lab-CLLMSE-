@@ -22,6 +22,15 @@ The EXPLOIT must succeed first (see [Q5](Q5-challenge3-ssrf-exploit.md)) — onl
 - **URL Allow-listing** — only destinations on an approved external-domains list may be fetched.
 - **Metadata-Endpoint / Private-IP Egress Blocking** — link-local (`169.254.0.0/16`), loopback, and private ranges are denied outright, regardless of allow-list state. Crucially, the check happens **before** any network request is made.
 
+## How I Approached This (Methodology)
+
+1. **Reuse the exact SSRF URL.** To prove the control works I resubmit the identical `169.254.169.254` metadata URL from Q5, not a reworded one.
+2. **Match the control to the root cause.** Q5 worked because the URL was fetched with no destination validation. The right fix is both an allow-list (only approved external domains) and, as defense-in-depth, an egress block on internal/link-local ranges — and it must run *before* the request leaves the server.
+3. **Re-test identically and read the console.** Enable guardrail → resubmit → confirm the fetch is rejected pre-flight.
+4. **Confirm the negative result.** The key line is "rejected before any network request was made" — no packet to IMDS, no credentials. That yields the GUARDRAIL flag.
+
+**Methodology in one line:** replay the identical metadata URL and confirm allow-listing + private-IP egress blocking stop the request before it is ever sent.
+
 ## How I Enabled & Re-tested It
 
 ```powershell

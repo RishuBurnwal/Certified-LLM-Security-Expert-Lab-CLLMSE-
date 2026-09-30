@@ -22,6 +22,15 @@ The EXPLOIT must succeed first (see [Q1](Q1-challenge1-indirect-prompt-injection
 - **Instruction-Marker Filtering** — detects imperative override phrases inside untrusted content.
 - **System/User Channel Isolation** — binds the ticket body to the DATA channel so its contents are never treated as instructions.
 
+## How I Approached This (Methodology)
+
+1. **Understand what "prove it's blocked" requires.** The point isn't to find a *new* payload — it's to demonstrate that the control neutralizes the *same* attack. So I deliberately reuse the exact Q1 payload; changing it would prove nothing about the guardrail.
+2. **Match the control to the root cause.** Q1 succeeded because data and instructions shared one channel. The correct fix is therefore channel isolation (structural) plus instruction-marker filtering (detective). I enable that named guardrail.
+3. **Re-test identically.** Enable guardrail → resubmit the identical payload → read the console. A proper control blocks it regardless of phrasing, so I don't try to reword around it.
+4. **Confirm the negative result.** Success here means the secret is *not* disclosed and the console reports the block. That inverted outcome (attack fails) is what yields the GUARDRAIL flag.
+
+**Methodology in one line:** verify the defense by replaying the identical exploit and confirming the control blocks it at the channel level rather than by phrasing.
+
 ## How I Enabled & Re-tested It
 
 ```powershell

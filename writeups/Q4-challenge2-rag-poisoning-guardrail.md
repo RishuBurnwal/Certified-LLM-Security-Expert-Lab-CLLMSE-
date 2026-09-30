@@ -22,6 +22,15 @@ The EXPLOIT must succeed first (see [Q3](Q3-challenge2-rag-poisoning-exploit.md)
 - **Source Provenance Allow-listing** — only documents from trusted, verified publishers are eligible for retrieval; unknown/anonymous contributors are rejected.
 - **Content Checksum Verification** — each document's hash must match a signed-off revision, so tampered or unsigned content is excluded.
 
+## How I Approached This (Methodology)
+
+1. **Reuse the exact poisoned document.** The goal is to prove the control rejects the *same* poison from Q3, so I resubmit it unchanged rather than crafting a new one.
+2. **Match the control to the root cause.** Q3 worked because retrieval trusted any document by similarity alone. The right fix addresses *provenance* (who wrote it) and *integrity* (was it tampered) — exactly the allow-listing + checksum guardrail.
+3. **Re-test identically and read the console.** Enable guardrail → resubmit → confirm the doc is excluded from retrieval and the real policy is served instead.
+4. **Confirm the negative result.** The block message naming the untrusted contributor and the failed checksum is the proof; that yields the GUARDRAIL flag.
+
+**Methodology in one line:** replay the identical poisoned article and confirm provenance allow-listing + checksum verification keep it out of retrieval.
+
 ## How I Enabled & Re-tested It
 
 ```powershell

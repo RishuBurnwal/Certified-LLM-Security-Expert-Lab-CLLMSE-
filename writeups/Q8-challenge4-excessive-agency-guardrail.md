@@ -22,6 +22,15 @@ The EXPLOIT must succeed first (see [Q7](Q7-challenge4-excessive-agency-exploit.
 - **Least-Privilege Tool Allow-list** — the agent is scoped to a read-only-reporting tool set; `wire_transfer` is simply not in its allowed tools.
 - **Human-in-the-Loop Approval** — even if a money-moving tool were allowed, amounts above the auto-approval threshold require named human sign-off before execution.
 
+## How I Approached This (Methodology)
+
+1. **Reuse the exact transfer request.** I resubmit the same `$50,000` wire request from Q7 to prove the control blocks the identical attack (this time single-quoted so the amount is sent verbatim).
+2. **Match the control to the root cause.** Q7 worked because of two failures: an over-broad tool set and no approval gate. The fix mirrors both — least-privilege tool allow-listing (remove the ability entirely) plus human-in-the-loop for high-value actions (defense-in-depth).
+3. **Re-test identically and read the console.** Enable guardrail → resubmit → confirm the transfer is rejected before execution.
+4. **Confirm the negative result.** The console shows `wire_transfer` isn't in the allowed tool set *and* the amount would need human sign-off — blocked before execution. That yields the GUARDRAIL flag.
+
+**Methodology in one line:** replay the identical money-movement request and confirm least-privilege scoping plus human approval stop it before any transfer executes.
+
 ## How I Enabled & Re-tested It
 
 ```powershell
