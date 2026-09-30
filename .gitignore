@@ -1,0 +1,6 @@
+# Temporary HTML captures used only to render screenshots
+screenshots/*.html
+
+# OS / editor cruft
+Thumbs.db
+.DS_Store

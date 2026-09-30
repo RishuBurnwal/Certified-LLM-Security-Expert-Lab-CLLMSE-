@@ -1,0 +1,34 @@
+Exam-based Lab - Practical Challenges
+10 free-text bonus questions. Requires the local cllmse-lab binary.
+
+Everything below is also in LAB.md if you want the long version - this is the complete short version, inline.
+
+1. Get the binary
+The exam package ships cllmse-lab.zip (5 pre-built binaries, one per OS/architecture, plus a README.txt). Extract it:
+
+# macOS / Linux
+unzip cllmse-lab.zip -d cllmse-lab/
+# Windows PowerShell
+Expand-Archive cllmse-lab.zip -DestinationPath cllmse-lab
+Pick the file matching your platform: cllmse-lab-darwin-arm64 (Apple Silicon), cllmse-lab-darwin-amd64 (Intel Mac), cllmse-lab-linux-amd64, cllmse-lab-linux-arm64, or cllmse-lab-windows-amd64.exe.
+
+2. Run it
+cd cllmse-lab/
+chmod +x cllmse-lab-darwin-arm64   # or your platform's file
+./cllmse-lab-darwin-arm64
+Windows: double-click the .exe, or run it from PowerShell. You should see listening at http://127.0.0.1:8090. Open that URL in your browser. If port 8090 is busy: PORT=9090 ./cllmse-lab-darwin-arm64 and adjust the URLs below accordingly.
+
+3. Work through each of the 5 challenges
+This is not a click-through demo. Each challenge page at http://127.0.0.1:8090/challenge/<n> (n = 1-5) gives you a scenario and an input box - you write the actual payload (a ticket body, a URL, a request to an agent, and so on) and the server checks whether your input actually triggers the flaw. A generic message does nothing; you have to construct something that exploits it.
+
+Read the scenario, write a payload, click Submit. If it doesn't trigger anything, the console tells you and gives a hint - adjust and resubmit. Once it works, you get an EXPLOIT flag.
+Click Enable Guardrail — turns on the specific control named on the page.
+Submit again — your payload (or any variation) is now blocked regardless of phrasing, revealing a GUARDRAIL flag.
+#	Challenge	OWASP mapping
+1	Indirect Prompt Injection	LLM01:2025
+2	RAG Knowledge-Base Poisoning	LLM04:2025
+3	SSRF via Unvalidated LLM-Generated URL	LLM05:2025
+4	Excessive Agency (Tool-Calling Agent)	LLM06:2025
+5	MCP Plugin Supply-Chain Rug Pull	LLM03:2025
+4. Answer the next 10 questions
+Each of the next 10 questions asks for one specific flag (an EXPLOIT flag or a GUARDRAIL flag for one of the 5 challenges above - two questions per challenge). Paste the flag exactly as shown, including the RTL{...} wrapper, no extra spaces. Case-insensitive on the hex digits, but do not alter or truncate the string.
